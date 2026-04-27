@@ -7,218 +7,197 @@
 
 <style>
 body {
-  font-family: Arial, sans-serif;
-  background: #eef4ff;
-  margin: 0;
+    font-family: Arial;
+    margin: 0;
+    background: #f2f4f8;
 }
 
-/* HEADER */
 .header {
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
-  color: white;
-  padding: 15px;
-  text-align: center;
+    background: #2d6cdf;
+    color: white;
+    text-align: center;
+    padding: 20px;
 }
 
-.header h1 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.header p {
-  margin: 5px 0 0;
-  font-size: 12px;
-}
-
-/* CONTAINER */
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 10px;
-}
-
-/* CARD */
 .card {
-  background: #fff;
-  border-radius: 14px;
-  padding: 15px;
-  margin-top: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: white;
+    margin: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-/* PRODUCT */
-.product-img {
-  width: 100%;
-  border-radius: 10px;
+button {
+    background: #2d6cdf;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+    font-size: 16px;
+    margin-top: 10px;
 }
 
-.title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 10px;
+.qty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.price {
-  color: #2563eb;
-  font-size: 16px;
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
-/* QTY */
-.qty-box {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.qty-box button {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: #2563eb;
-  color: white;
-  border-radius: 6px;
-  font-size: 18px;
-}
-
-/* TOTAL */
-.total {
-  font-weight: bold;
-  margin-top: 10px;
-}
-
-/* INPUT */
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin-top: 5px;
-}
-
-/* BUTTON */
-.btn {
-  background: #2563eb;
-  color: white;
-  border: none;
-  width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 16px;
-  margin-top: 10px;
-}
-
-/* STATUS */
-.status {
-  margin-top: 8px;
-  font-size: 12px;
+.wa-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: green;
+    color: white;
+    padding: 12px 15px;
+    border-radius: 50px;
+    text-decoration: none;
 }
 </style>
-
 </head>
+
 <body>
 
-<!-- HEADER -->
 <div class="header">
-  <h1>TENU</h1>
-  <p>Pre Order Senin & Jumat (08:00 - 20:00)</p>
-  <p id="jam"></p>
+    <h1>TENU</h1>
+    <p>Pre Order: Senin & Selasa (08:00 - 20:00)</p>
+    <p>Pengiriman: Hari Rabu</p>
 </div>
 
-<div class="container">
+<div class="card">
+    <h2>Cheesecuit 250 ml</h2>
+    <p>Rp15.000</p>
 
-  <!-- PRODUK -->
-  <div class="card">
-    <img src="https://via.placeholder.com/400x250" class="product-img">
-
-    <div class="title">Cheescuit 250 ml</div>
-    <div class="price">Rp15.000</div>
-
-    <div class="qty-box">
-      <button onclick="kurang()">-</button>
-      <span id="jumlah">1</span>
-      <button onclick="tambah()">+</button>
+    <div class="qty">
+        <button onclick="kurang()">-</button>
+        <span id="jumlah">1</span>
+        <button onclick="tambah()">+</button>
     </div>
 
-    <div class="total">Total: <span id="total"></span></div>
-  </div>
-
-  <!-- FORM -->
-  <div class="card">
-    <label>Nama Pemesan</label>
-    <input type="text" id="nama">
-
-    <label>Alamat</label>
-    <textarea id="alamat"></textarea>
-
-    <button class="btn" onclick="kirimWA()">Pesan Sekarang</button>
-
-    <p id="status" class="status"></p>
-  </div>
-
+    <p>Total: Rp<span id="total">15000</span></p>
 </div>
 
+<div class="card">
+    <p id="infoPengiriman"></p>
+
+    <p>
+    🔄 Reschedule maksimal hari Selasa<br>
+    📩 Ajukan via WhatsApp
+    </p>
+
+    <input type="text" id="nama" placeholder="Nama Pemesan">
+    <input type="text" id="alamat" placeholder="Alamat">
+
+    <button onclick="pesan()">Pesan via WhatsApp</button>
+    <button onclick="reschedule()">Reschedule Pesanan</button>
+</div>
+
+<a class="wa-float" href="https://wa.me/6285881382477?text=Halo%20TENU,%20saya%20ingin%20bertanya" target="_blank">
+💬 Chat
+</a>
+
 <script>
-let harga = 15000;
 let jumlah = 1;
+const harga = 15000;
 
-/* JAM REALTIME */
-function updateJam() {
-  let now = new Date();
-  let jam = now.toLocaleString("id-ID");
-  document.getElementById("jam").innerText = jam;
-}
-setInterval(updateJam, 1000);
-
-/* TOTAL */
 function updateTotal() {
-  let total = jumlah * harga;
-  document.getElementById("jumlah").innerText = jumlah;
-  document.getElementById("total").innerText = "Rp" + total.toLocaleString("id-ID");
+    document.getElementById("jumlah").innerText = jumlah;
+    document.getElementById("total").innerText = jumlah * harga;
 }
 
 function tambah() {
-  jumlah++;
-  updateTotal();
+    jumlah++;
+    updateTotal();
 }
 
 function kurang() {
-  if (jumlah > 1) {
-    jumlah--;
+    if (jumlah > 1) jumlah--;
     updateTotal();
-  }
 }
 
-updateTotal();
+const now = new Date();
+const hari = now.toLocaleDateString('id-ID', { weekday: 'long' });
 
-/* KIRIM WA */
-function kirimWA() {
-  let now = new Date();
-  let day = now.getDay();
-  let hour = now.getHours();
+// Info pengiriman
+let info = "";
+if (hari === "Senin" || hari === "Selasa") {
+    info = "📦 Pesanan hari ini akan dikirim hari Rabu";
+} else {
+    info = "❌ Order hanya buka Senin & Selasa";
+}
+document.getElementById("infoPengiriman").innerText = info;
 
-  if (!((day == 1 || day == 5) && (hour >= 8 && hour < 20))) {
-    document.getElementById("status").innerText =
-      "❌ Order hanya Senin & Jumat (08:00-20:00)";
-    return;
-  }
+// PESAN
+function pesan() {
+    const jam = new Date().getHours();
 
-  let nama = document.getElementById("nama").value;
-  let alamat = document.getElementById("alamat").value;
-  let total = jumlah * harga;
+    if (hari !== "Senin" && hari !== "Selasa") {
+        alert("Order hanya hari Senin & Selasa");
+        return;
+    }
 
-  let pesan = `Halo TENU, saya ingin order:%0A
-Nama: ${nama}%0A
-Produk: Cheescuit 250 ml%0A
-Harga: Rp15.000%0A
-Jumlah: ${jumlah}%0A
-Total: Rp${total}%0A
-Alamat: ${alamat}%0A
-Pengiriman: H+1 (belum ongkir)`;
+    if (jam < 8 || jam > 20) {
+        alert("Order hanya jam 08:00 - 20:00");
+        return;
+    }
 
-  let noWA = "6285881382477";
+    const nama = document.getElementById("nama").value;
+    const alamat = document.getElementById("alamat").value;
 
-  window.open(`https://wa.me/${noWA}?text=${pesan}`, "_blank");
+    if (nama === "" || alamat === "") {
+        alert("Isi nama dan alamat dulu");
+        return;
+    }
+
+    const total = jumlah * harga;
+
+    const pesanWA =
+`Halo TENU 👋
+
+Saya ingin order:
+
+Nama: ${nama}
+Alamat: ${alamat}
+Produk: Cheesecuit 250 ml
+Jumlah: ${jumlah}
+Total: Rp${total}
+
+Pengiriman: Hari Rabu`;
+
+    window.open("https://wa.me/6285881382477?text=" + encodeURIComponent(pesanWA));
+}
+
+// RESCHEDULE
+function reschedule() {
+    const nama = document.getElementById("nama").value;
+
+    if (nama === "") {
+        alert("Isi nama dulu");
+        return;
+    }
+
+    const pesanWA =
+`Halo TENU 👋
+
+Saya ingin RESCHEDULE pesanan:
+
+Nama: ${nama}
+
+Alasan:
+Tanggal kirim baru:
+
+Terima kasih 🙏`;
+
+    window.open("https://wa.me/6285881382477?text=" + encodeURIComponent(pesanWA));
 }
 </script>
 
