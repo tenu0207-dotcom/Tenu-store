@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TENU - Pre Order</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #eef4ff;
+  margin: 0;
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: white;
+  padding: 15px;
+  text-align: center;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.header p {
+  margin: 5px 0 0;
+  font-size: 12px;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 10px;
+}
+
+/* CARD */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 15px;
+  margin-top: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* PRODUCT */
+.product-img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.price {
+  color: #2563eb;
+  font-size: 16px;
+}
+
+/* QTY */
+.qty-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.qty-box button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 6px;
+  font-size: 18px;
+}
+
+/* TOTAL */
+.total {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+/* INPUT */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+/* BUTTON */
+.btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* STATUS */
+.status {
+  margin-top: 8px;
+  font-size: 12px;
+}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>TENU</h1>
+  <p>Pre Order Senin & Jumat (08:00 - 20:00)</p>
+  <p id="jam"></p>
+</div>
+
+<div class="container">
+
+  <!-- PRODUK -->
+  <div class="card">
+    <img src="https://via.placeholder.com/400x250" class="product-img">
+
+    <div class="title">Cheescuit 250 ml</div>
+    <div class="price">Rp15.000</div>
+
+    <div class="qty-box">
+      <button onclick="kurang()">-</button>
+      <span id="jumlah">1</span>
+      <button onclick="tambah()">+</button>
+    </div>
+
+    <div class="total">Total: <span id="total"></span></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="card">
+    <label>Nama Pemesan</label>
+    <input type="text" id="nama">
+
+    <label>Alamat</label>
+    <textarea id="alamat"></textarea>
+
+    <button class="btn" onclick="kirimWA()">Pesan Sekarang</button>
+
+    <p id="status" class="status"></p>
+  </div>
+
+</div>
+
+<script>
+let harga = 15000;
+let jumlah = 1;
+
+/* JAM REALTIME */
+function updateJam() {
+  let now = new Date();
+  let jam = now.toLocaleString("id-ID");
+  document.getElementById("jam").innerText = jam;
+}
+setInterval(updateJam, 1000);
+
+/* TOTAL */
+function updateTotal() {
+  let total = jumlah * harga;
+  document.getElementById("jumlah").innerText = jumlah;
+  document.getElementById("total").innerText = "Rp" + total.toLocaleString("id-ID");
+}
+
+function tambah() {
+  jumlah++;
+  updateTotal();
+}
+
+function kurang() {
+  if (jumlah > 1) {
+    jumlah--;
+    updateTotal();
+  }
+}
+
+updateTotal();
+
+/* KIRIM WA */
+function kirimWA() {
+  let now = new Date();
+  let day = now.getDay();
+  let hour = now.getHours();
+
+  if (!((day == 1 || day == 5) && (hour >= 8 && hour < 20))) {
+    document.getElementById("status").innerText =
+      "❌ Order hanya Senin & Jumat (08:00-20:00)";
+    return;
+  }
+
+  let nama = document.getElementById("nama").value;
+  let alamat = document.getElementById("alamat").value;
+  let total = jumlah * harga;
+
+  let pesan = `Halo TENU, saya ingin order:%0A
+Nama: ${nama}%0A
+Produk: Cheescuit 250 ml%0A
+Harga: Rp15.000%0A
+Jumlah: ${jumlah}%0A
+Total: Rp${total}%0A
+Alamat: ${alamat}%0A
+Pengiriman: H+1 (belum ongkir)`;
+
+  let noWA = "6285881382477";
+
+  window.open(`https://wa.me/${noWA}?text=${pesan}`, "_blank");
+}
+</script>
+
+</body>
+</html>
